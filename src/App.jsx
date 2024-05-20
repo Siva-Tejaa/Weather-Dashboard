@@ -129,6 +129,7 @@ const App = () => {
     >
       <div className="flex flex-col min-h-[100svh] bg-[linear-gradient(169deg,#a0025e,#f9c829_153.21%)]">
         <Header />
+        {console.log(cityData)}
         <WeatherCard />
       </div>
     </Context.Provider>

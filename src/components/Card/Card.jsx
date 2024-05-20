@@ -26,6 +26,10 @@ const Card = () => {
   let sunset = new Date(cityData?.sys?.sunset * 1000);
   let sunsettime = `${sunset.getHours()}:${sunset.getMinutes()}`;
 
+  let updTime = new Date(cityData?.dt * 1000);
+  const updateTime = new Date(updTime);
+  // let updateTime = `${updTime.getHours()}:${updTime.getMinutes()}`;
+
   //   const { temp, humidity, pressure } = cityData?.main;
   //   const { main: weatherType, icon, description } = cityData?.weather[0];
   //   const { name } = cityData;
@@ -33,7 +37,7 @@ const Card = () => {
   //   const { country, sunrise, sunset } = cityData.sys;
   return (
     <div className="text-white flex flex-col gap-3 w-[100%]">
-      <div className="flex flex-row items-center justify-between">
+      <div className="flex flex-row items-center justify-between gap-1">
         <button
           onClick={() => getUserLocation()}
           className="flex gap-1 text-sm shadow-[0px_0px_50px_-3px_rgba(0,0,0,0.2)] p-2 border border-solid border-[white] rounded-md"
@@ -41,6 +45,7 @@ const Card = () => {
           <MdMyLocation fontSize="1.3em" />
           <span>Get Current Location</span>
         </button>
+        <p className="text-xs">{updateTime.toUTCString()}</p>
         {/* <div className="flex text-sm">
           <button
             className="p-2 px-3 border border-solid border-[grey]"
