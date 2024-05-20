@@ -3,6 +3,7 @@ import "./App.css";
 
 //Components
 import Header from "./components/Header/Header";
+import WeatherCard from "./components/WeatherCard/WeatherCard";
 
 //Context
 import { Context } from "./utils/Context";
@@ -12,58 +13,120 @@ import {
   API_KEY,
   GET_WEATHER_BY_CITY_NAME,
   GET_5_DAY_WEATHER_FORECAST,
+  GET_WEATHER_BY_LOCATION,
 } from "./utils/api/api";
-import WeatherCard from "./components/WeatherCard/WeatherCard";
 
 const App = () => {
+  const [userlocation, setUserLocation] = useState({
+    latitude: "",
+    longitude: "",
+  });
+
+  const [units, setUnits] = useState("units=metric");
+
   const [city, setCity] = useState("New Delhi");
-
-  const [cityLoading, setCityLoading] = useState(false);
   const [cityData, setCityData] = useState([]);
-  const [cityError, setCityError] = useState(false);
-
-  const [foreCastLoading, setForeCastLoading] = useState(false);
   const [foreCastData, setForeCastData] = useState([]);
-  const [foreCastError, setForeCastError] = useState(false);
 
-  const getAPI = async () => {
-    try {
-      const URL = `${GET_WEATHER_BY_CITY_NAME}${city}${API_KEY}`;
-      const response = await fetch(URL);
-      const data = await response.json();
-      setCityData(data);
-      console.log(data);
-      setCityLoading(true);
-    } catch (error) {
-      console.log(error);
-      setCityError(true);
-    } finally {
-      setCityLoading(false);
+  //GET User Location
+  const getUserLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      });
+    } else {
+      setCity("New Delhi");
+      alert("Geolocation is not supported by this browser.");
     }
   };
 
-  const getAPI2 = async () => {
+  // const setTempC = () => {
+  //   setUnits("units=metric");
+  // };
+
+  // const setTempF = () => {
+  //   setUnits("units=imperial");
+  // };
+
+  //Get Weather Data
+  const getWeatherByCity = async () => {
     try {
-      const URL = `${GET_5_DAY_WEATHER_FORECAST}${city}${API_KEY}`;
+      const URL = `${GET_WEATHER_BY_CITY_NAME}${city}${API_KEY}&${units}`;
+      const response = await fetch(URL);
+      const data = await response.json();
+      if (data?.main) {
+        setCityData(data);
+      }
+    } catch (error) {
+      alert("Something went wrong");
+    }
+  };
+
+  const getWeatherByLocation = async () => {
+    try {
+      const URL = `${GET_WEATHER_BY_LOCATION}${userlocation?.latitude}&lon=${userlocation?.longitude}${API_KEY}&${units}`;
+      const response = await fetch(URL);
+      const data = await response.json();
+      if (data?.main) {
+        setCityData(data);
+      }
+    } catch (error) {
+      alert("Something went wrong");
+    }
+  };
+
+  //Get 5 Day Weather Forecast Data
+  const getWeatherForeCast = async () => {
+    try {
+      const URL = `${GET_5_DAY_WEATHER_FORECAST}${city}${API_KEY}&${units}`;
       const response = await fetch(URL);
       const data = await response.json();
       console.log(data);
-      setCityLoading(true);
     } catch (error) {
-      console.log(error);
-      setCityError(true);
-    } finally {
-      setCityLoading(false);
+      alert("Something went wrong");
     }
   };
 
   useEffect(() => {
-    getAPI();
-    getAPI2();
-  }, [city]);
+    if (userlocation?.latitude == "" || userlocation?.longitude == "") {
+      getWeatherByCity();
+    } else {
+      getWeatherByLocation();
+    }
+    // getWeatherByCity();
+    // getUserLocation();
+    getWeatherForeCast();
+  }, []);
+
+  // useEffect(() => {
+  //   if (userlocation?.latitude == "" || userlocation?.longitude == "") {
+  //     getWeatherByCity();
+  //   } else {
+  //     getWeatherByLocation();
+  //   }
+  // }, [units]);
+
+  useEffect(() => {
+    if (userlocation?.latitude == "" || userlocation?.longitude == "") {
+      // console.log("User not approved location");
+    } else {
+      getWeatherByLocation();
+    }
+  }, [userlocation]);
 
   return (
-    <Context.Provider value={{ cityData }}>
+    <Context.Provider
+      value={{
+        city,
+        setCity,
+        cityData,
+        getUserLocation,
+        getWeatherByCity,
+      }}
+    >
       <div className="flex flex-col min-h-[100svh] bg-[linear-gradient(169deg,#a0025e,#f9c829_153.21%)]">
         <Header />
         <WeatherCard />
