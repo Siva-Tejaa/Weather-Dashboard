@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 //Context
 import { Context } from "../../utils/Context";
@@ -8,7 +8,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { FaSearch } from "react-icons/fa";
 
 const Search = () => {
-  const { city, setCity, getWeatherByCity } = useContext(Context);
+  const { setCity, getWeatherByCity } = useContext(Context);
 
   return (
     <div className="w-[100%] mb-2">

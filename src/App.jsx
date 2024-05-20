@@ -12,7 +12,6 @@ import { Context } from "./utils/Context";
 import {
   API_KEY,
   GET_WEATHER_BY_CITY_NAME,
-  GET_5_DAY_WEATHER_FORECAST,
   GET_WEATHER_BY_LOCATION,
 } from "./utils/api/api";
 
@@ -26,7 +25,7 @@ const App = () => {
 
   const [city, setCity] = useState("New Delhi");
   const [cityData, setCityData] = useState([]);
-  const [foreCastData, setForeCastData] = useState([]);
+  // const [foreCastData, setForeCastData] = useState([]);
 
   //GET User Location
   const getUserLocation = () => {
@@ -43,15 +42,7 @@ const App = () => {
     }
   };
 
-  // const setTempC = () => {
-  //   setUnits("units=metric");
-  // };
-
-  // const setTempF = () => {
-  //   setUnits("units=imperial");
-  // };
-
-  //Get Weather Data
+  //Get Weather Data by City Name
   const getWeatherByCity = async () => {
     try {
       const URL = `${GET_WEATHER_BY_CITY_NAME}${city}${API_KEY}&${units}`;
@@ -65,6 +56,7 @@ const App = () => {
     }
   };
 
+  //Get Weather Data by Location
   const getWeatherByLocation = async () => {
     try {
       const URL = `${GET_WEATHER_BY_LOCATION}${userlocation?.latitude}&lon=${userlocation?.longitude}${API_KEY}&${units}`;
@@ -78,17 +70,9 @@ const App = () => {
     }
   };
 
-  //Get 5 Day Weather Forecast Data
-  const getWeatherForeCast = async () => {
-    try {
-      const URL = `${GET_5_DAY_WEATHER_FORECAST}${city}${API_KEY}&${units}`;
-      const response = await fetch(URL);
-      const data = await response.json();
-      console.log(data);
-    } catch (error) {
-      alert("Something went wrong");
-    }
-  };
+  useEffect(() => {
+    getUserLocation();
+  }, []);
 
   useEffect(() => {
     if (userlocation?.latitude == "" || userlocation?.longitude == "") {
@@ -98,16 +82,7 @@ const App = () => {
     }
     // getWeatherByCity();
     // getUserLocation();
-    getWeatherForeCast();
   }, []);
-
-  // useEffect(() => {
-  //   if (userlocation?.latitude == "" || userlocation?.longitude == "") {
-  //     getWeatherByCity();
-  //   } else {
-  //     getWeatherByLocation();
-  //   }
-  // }, [units]);
 
   useEffect(() => {
     if (userlocation?.latitude == "" || userlocation?.longitude == "") {
@@ -129,7 +104,6 @@ const App = () => {
     >
       <div className="flex flex-col min-h-[100svh] bg-[linear-gradient(169deg,#a0025e,#f9c829_153.21%)]">
         <Header />
-        {console.log(cityData)}
         <WeatherCard />
       </div>
     </Context.Provider>
